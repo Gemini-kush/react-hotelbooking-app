@@ -1,0 +1,331 @@
+/* ================= Booking Page ================= */
+.booking-section {
+  background-color: #fafafa;
+}
+
+.summary-card {
+  top: 90px;
+}
+
+.form-control,
+.form-select {
+  box-shadow: none !important;
+  border-radius: 8px !important;
+}
+
+.input-group-text {
+  background-color: #fff !important;
+  border-right: none !important;
+}
+
+.input-group .form-control {
+  border-left: none !important;
+}
+
+.text-orange {
+  color: #e54c19 !important;
+}
+
+/* ✅ Remove blue outline and focus border globally */
+.form-control:focus,
+.form-select:focus,
+textarea:focus,
+input:focus,
+button:focus {
+  outline: none !important;
+  box-shadow: none !important;
+  border-color: #ced4da !important;
+}
+
+/* ================= Payment Button ================= */
+.payment-btn {
+  background: linear-gradient(90deg, #e54c19, #ff7a29) !important;
+  border: none !important;
+  border-radius: 10px !important;
+  color: #fff !important;
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0 0 0 rgba(229, 76, 25, 0);
+  width: 49%;
+}
+
+.cancel-btn{
+    border-radius: 10px !important;
+    transition: all 0.3s ease-in-out;
+    width: 48%;
+}
+
+.payment-btn:hover {
+  background: linear-gradient(90deg, #ff5e29, #ff974d) !important;
+  box-shadow: 0 0 15px rgba(229, 76, 25, 0.6);
+  transform: translateY(-2px);
+}
+
+.payment-btn:active {
+  transform: scale(0.97);
+}
+
+/* ================= Modal Styling ================= */
+.modal-content {
+  border-radius: 14px;
+  padding-bottom: 10px;
+  border: none !important;
+  overflow: hidden;
+}
+
+/* ✅ Themed Modal Header */
+.modal-header {
+  background: linear-gradient(90deg, #e54c19, #ff7a29);
+  color: #fff !important;
+  border-bottom: none !important;
+  border-top-left-radius: 14px !important;
+  border-top-right-radius: 14px !important;
+}
+
+.modal-header .modal-title {
+  font-weight: 600;
+  color: #fff !important;
+}
+
+.modal-header .btn-close {
+  filter: invert(1) brightness(200%);
+  opacity: 0.8;
+}
+
+.modal-header .btn-close:hover {
+  opacity: 1;
+}
+
+/* ================= Tabs Styling ================= */
+.nav-tabs {
+  border-bottom: none !important;
+}
+
+.nav-tabs .nav-link {
+  border: none;
+  color: #555;
+  font-weight: 500;
+  background: transparent;
+  transition: all 0.3s ease;
+}
+
+.nav-tabs .nav-link.active {
+  color: #e54c19 !important;
+  border-bottom: 3px solid #e54c19 !important;
+  font-weight: 600;
+}
+
+.nav-tabs .nav-link:hover {
+  color: #e54c19 !important;
+}
+
+/* ================= Card Payment Section ================= */
+.card-payment-section label {
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.card-payment-section input {
+  font-size: 15px;
+  padding: 10px;
+}
+
+.card-payment-section p {
+  margin-top: 6px;
+  color: #6c757d;
+}
+
+/* ================= UPI Section ================= */
+.upi-section label {
+  font-weight: 500;
+}
+
+.upi-section input {
+  font-size: 15px;
+  padding: 10px;
+}
+
+/* ================= NetBanking Section ================= */
+.netbanking-section label {
+  font-weight: 500;
+}
+
+/* ================= Wallet Section ================= */
+.wallet-section label {
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.wallet-section .btn {
+  border-radius: 8px !important;
+  font-weight: 500;
+  transition: all 0.3s ease-in-out;
+}
+
+.wallet-section .btn:hover {
+  transform: translateY(-2px);
+  opacity: 0.9;
+}
+
+/* ================= Modal Footer ================= */
+.modal-footer {
+  border-top: none !important;
+  justify-content: flex-end;
+  padding-top: 0;
+}
+
+/* ================= Responsive Fix ================= */
+@media (max-width: 768px) {
+  .modal-content {
+    border-radius: 8px;
+  }
+  .wallet-section .btn {
+    flex: 1 1 45%;
+  }
+}
+
+.modal-gradient {
+  background: linear-gradient(90deg, #e54c19, #ff7b42);
+  color: #fff !important;
+}
+
+.success-circle {
+  width: 70px;
+  height: 70px;
+  margin: 0 auto;
+  border-radius: 50%;
+  background-color: #d1f7d6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #22bb33;
+  font-size: 38px;
+}
+
+.toast {
+  border-radius: 10px !important;
+  font-size: 14px;
+}
+
+/* 🌅 Maheshwari Nivas Theme Modal */
+.modal-content {
+  border-radius: 16px;
+  overflow: hidden;
+  border: none;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+/* 🌞 Gradient Header */
+.modal-header {
+  background: linear-gradient(90deg, #ff7b00, #ff4800);
+  color: white;
+  border-bottom: none;
+  padding: 1rem 1.5rem;
+}
+
+.modal-title {
+  font-weight: 600;
+  font-size: 1.25rem;
+}
+
+.modal-header .btn-close {
+  filter: brightness(0) invert(1);
+  opacity: 0.8;
+}
+
+.modal-header .btn-close:hover {
+  opacity: 1;
+}
+
+/* ✅ Modal Body */
+.modal-body {
+  padding: 1.8rem;
+  background-color: #fffdf8;
+}
+
+/* ✅ Modal Footer */
+.modal-footer {
+  border-top: none !important;
+  background-color: #fffdf8;
+  padding: 1rem 1.5rem;
+  justify-content: flex-end;
+}
+
+/* 💳 Payment Tabs */
+.nav-tabs .nav-link {
+  border: none;
+  color: #555;
+  font-weight: 500;
+  transition: all 0.3s ease-in-out;
+}
+
+.nav-tabs .nav-link.active {
+  color: #e54c19;
+  border-bottom: 3px solid #e54c19;
+}
+
+.nav-tabs .nav-link:hover {
+  color: #ff5e29;
+}
+
+/* 💰 Payment Button */
+.payment-btn {
+  background: linear-gradient(90deg, #ff7b00, #ff4800);
+  border: none !important;
+  border-radius: 10px !important;
+  color: #fff !important;
+  font-weight: 500;
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0 0 0 rgba(229, 76, 25, 0);
+  padding: 10px 20px;
+}
+
+.payment-btn:hover {
+  background: linear-gradient(90deg, #ff8c1a, #ff5e29);
+  box-shadow: 0 0 14px rgba(255, 94, 41, 0.6);
+  transform: translateY(-2px);
+}
+
+.payment-btn:active {
+  transform: scale(0.97);
+}
+
+/* 💳 Input Fields */
+.card-payment-section label {
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.card-payment-section input {
+  font-size: 15px;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+}
+
+.card-payment-section input:focus {
+  outline: none;
+  box-shadow: 0 0 6px rgba(229, 76, 25, 0.3);
+  border-color: #e54c19;
+}
+
+.success-icon {
+  font-size: 60px;
+  color: #28a745;
+  animation: popIn 0.4s ease;
+}
+
+@keyframes popIn {
+  from {
+    transform: scale(0.5);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.toast {
+  border-radius: 12px !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}

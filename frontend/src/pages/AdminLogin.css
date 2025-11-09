@@ -1,0 +1,23 @@
+.admin-login-page {
+  height: 100vh;
+  background-color: #f8f9fb;
+}
+
+.admin-card {
+  width: 500px;
+  background-color: #fff;
+}
+
+.text-orange {
+  color: #f15a24;
+}
+
+.login-btn {
+  background-color: #f15a24;
+  border: none;
+  transition: all 0.3s ease;
+}
+
+.login-btn:hover {
+  background-color: #d84d1d;
+}

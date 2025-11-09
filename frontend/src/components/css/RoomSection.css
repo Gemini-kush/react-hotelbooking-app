@@ -1,0 +1,36 @@
+/* Room card styling */
+.room-card {
+  width: 440px;
+  transition: all 0.3s ease;
+}
+
+.room-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 10px 25px rgba(245, 73, 0, 0.2);
+}
+
+/* Image styling */
+.room-image {
+  width: 100%;
+  height: 230px;
+  object-fit: cover;
+}
+
+/* Price badge */
+.price-badge {
+  background-color: #f54900;
+  color: white;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+/* Make layout responsive */
+@media (max-width: 768px) {
+  .room-card {
+    width: 90%;
+    height: auto;
+  }
+  .room-image {
+    height: 200px;
+  }
+}

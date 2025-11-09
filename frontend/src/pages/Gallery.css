@@ -1,0 +1,46 @@
+.gallery-hero {
+  background: #D84000;
+  height: 280px;
+  color: #fff;
+}
+
+.filter-btn {
+  border: none !important;
+  transition: all 0.3s ease;
+}
+
+.active-filter {
+  background-color: #e54c19 !important;
+  color: white !important;
+  box-shadow: 0 4px 10px rgba(229, 76, 25, 0.4);
+}
+
+.gallery-card img {
+  transition: transform 0.4s ease;
+}
+
+.gallery-card:hover img {
+  transform: scale(1.05);
+}
+
+.experience-card {
+  background-color: #fff;
+}
+
+.instagram-btn {
+  background: linear-gradient(90deg, #de19e5, #c41040);
+  color: #fff !important;
+  font-weight: 500;
+  box-shadow: 0 4px 10px rgba(255, 59, 110, 0.4);
+  transition: all 0.3s ease;
+}
+
+.instagram-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(255, 59, 110, 0.5);
+}
+
+.experience-card p {
+  font-size: 15px;
+  line-height: 1.6;
+}

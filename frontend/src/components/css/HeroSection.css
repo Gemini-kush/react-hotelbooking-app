@@ -1,0 +1,137 @@
+/* === Hero Wrapper === */
+.hero-wrapper {
+  position: relative;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* === Background Image === */
+.hero-bg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 0;
+  transform: scale(1.1);
+  filter: brightness(70%) contrast(105%) saturate(115%);
+  transition: transform 10s ease, filter 1s ease;
+}
+
+.hero-wrapper:hover .hero-bg {
+  transform: scale(1.2);
+  filter: brightness(80%) contrast(110%) saturate(120%);
+}
+
+/* === Overlay === */
+.hero-overlay {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    to bottom right,
+    rgba(0, 0, 0, 0.45),
+    rgba(0, 0, 0, 0.75)
+  );
+  backdrop-filter: blur(2px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+}
+
+/* === Text === */
+.hero-overlay h5 {
+  font-family: "Poppins", sans-serif;
+  letter-spacing: 2px;
+  color: #ffe7cc;
+  font-weight: 500;
+}
+
+.hero-overlay h1 {
+  font-size: 4rem;
+  font-weight: 800;
+  color: #fff;
+  text-transform: uppercase;
+  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  margin-bottom: 15px;
+}
+
+.hero-overlay p {
+  font-size: 1.2rem;
+  color: #f0f0f0;
+  max-width: 600px;
+  margin: 0 auto 30px auto;
+  line-height: 1.6;
+}
+
+/* === Buttons === */
+.hero-overlay button {
+  border-radius: 12px;
+  font-size: 1.05rem;
+  letter-spacing: 0.3px;
+  transition: all 0.3s ease;
+}
+
+/* 🟠 Book Now */
+.book-now-btn {
+  background: linear-gradient(90deg, #f15a24, #ff784e);
+  border: none;
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(241, 90, 36, 0.4);
+}
+
+.book-now-btn:hover {
+  transform: translateY(-3px);
+  background: linear-gradient(90deg, #ff784e, #f15a24);
+  box-shadow: 0 6px 18px rgba(241, 90, 36, 0.6);
+}
+
+/* ⚪ Explore Rooms */
+.explore-btn {
+  border: 2px solid #f15a24;
+  color: #f15a24;
+  background-color: #fff;
+  box-shadow: 0 4px 10px rgba(241, 90, 36, 0.15);
+}
+
+.explore-btn:hover {
+  background-color: #f15a24;
+  color: #fff;
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(241, 90, 36, 0.3);
+}
+
+.explore-btn i {
+  transition: transform 0.3s ease;
+}
+
+.explore-btn:hover i {
+  transform: translateX(5px);
+}
+
+/* === Responsive Design === */
+@media (max-width: 768px) {
+  .hero-overlay h1 {
+    font-size: 2.4rem;
+  }
+
+  .hero-overlay h5 {
+    font-size: 1rem;
+  }
+
+  .hero-overlay p {
+    font-size: 1rem;
+    max-width: 90%;
+  }
+
+  .hero-overlay button {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+}

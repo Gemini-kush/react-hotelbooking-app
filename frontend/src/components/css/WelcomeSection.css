@@ -1,0 +1,18 @@
+.amenity-card {
+  transition: all 0.3s ease;
+  background: #fff;
+}
+
+.amenity-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 6px 20px rgba(245, 73, 0, 0.2);
+}
+
+.amenity-card i {
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.amenity-card:hover i {
+  transform: scale(1.2);
+  color: #ff4500;
+}

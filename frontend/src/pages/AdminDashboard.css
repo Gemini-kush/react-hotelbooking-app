@@ -1,0 +1,209 @@
+/* --------------------------
+   General Layout
+--------------------------- */
+.admin-dashboard {
+  background-color: #f8f9fb;
+  min-height: 100vh;
+  font-family: "Poppins", sans-serif;
+}
+
+.text-orange {
+  color: #f15a24;
+}
+
+/* --------------------------
+   Statistic Cards
+--------------------------- */
+.stat-card {
+  background-color: #fff;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.stat-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+}
+
+.icon-box {
+  width: 45px;
+  height: 45px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.4rem;
+  border-radius: 12px;
+}
+
+.bg-purple-subtle {
+  background-color: #f3e6ff;
+}
+
+.text-purple {
+  color: #8e44ad;
+}
+
+/* --------------------------
+   Tabs Styling
+--------------------------- */
+#admin-tabs .nav-link {
+  border-radius: 20px !important;
+  font-weight: 500;
+  color: #444;
+  transition: all 0.3s ease;
+}
+
+#admin-tabs .nav-link:hover {
+  background-color: rgba(241, 90, 36, 0.1);
+  color: #f15a24;
+}
+
+#admin-tabs .nav-link.active {
+  background-color: #f15a24 !important;
+  color: #fff !important;
+  font-weight: 600;
+}
+
+/* --------------------------
+   Equal Width Tabs (50/50)
+--------------------------- */
+.equal-tabs .nav-item {
+  flex: 1;
+  text-align: center;
+}
+
+.equal-tabs .nav-link {
+  width: 100%;
+  border-radius: 50px !important;
+  font-weight: 500;
+  color: #333;
+  background-color: #fff;
+  transition: all 0.3s ease;
+}
+
+.equal-tabs .nav-link:hover {
+  background-color: rgba(241, 90, 36, 0.1);
+  color: #f15a24;
+}
+
+.equal-tabs .nav-link.active {
+  background-color: #f15a24 !important;
+  color: #fff !important;
+  font-weight: 600;
+}
+
+
+:root {
+  --brand-orange: #f15a24;
+}
+
+.table-row {
+  transition: all 0.25s ease;
+}
+
+.table-row:hover {
+  background-color: rgba(241, 90, 36, 0.07);
+  transform: scale(1.01);
+}
+
+.table-bookings {
+  border-radius: 12px !important;
+  overflow: hidden;
+}
+
+.table-bookings thead th {
+  border-bottom: 2px solid var(--brand-orange);
+}
+
+.badge {
+  font-size: 0.85rem;
+  border-radius: 30px !important;
+}
+
+.card {
+  backdrop-filter: blur(10px);
+}
+
+body.dark-mode .table-bookings {
+  background-color: #1c1c1c;
+  color: #eaeaea;
+}
+
+body.dark-mode .table-bookings thead {
+  background-color: #2a2a2a !important;
+}
+
+body.dark-mode .card {
+  background-color: #202020 !important;
+  color: #eaeaea;
+  border: 1px solid #333;
+}
+
+.stat-card {
+  transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(241, 90, 36, 0.2);
+}
+
+.icon-box {
+  font-size: 1.5rem;
+  width: 50px;
+  height: 50px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.table-hover tbody tr:hover {
+  background-color: rgba(241, 90, 36, 0.07);
+  transition: 0.2s ease;
+}
+
+.modal-content {
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+
+.modal-content {
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+  border: none;
+}
+
+.modal-footer button {
+  min-width: 120px;
+}
+
+.modal-body i {
+  animation: pulse 1.2s infinite ease-in-out;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.7;
+  }
+}
+
+.table-bookings td .btn-outline-danger {
+  transition: 0.2s;
+}
+
+.table-bookings td .btn-outline-danger:hover {
+  background-color: #dc3545;
+  color: white;
+}
+
+.modal-content {
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+}
