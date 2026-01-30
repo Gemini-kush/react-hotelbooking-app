@@ -12,22 +12,22 @@
     "bootstrap": "^5.3.8",
     "bootstrap-icons": "^1.13.1",
     "framer-motion": "^12.23.24",
-    "react": "^19.2.0",
+    "react": "^18.2.0",
     "react-bootstrap": "^2.10.10",
-    "react-dom": "^19.2.0",
+    "react-dom": "^18.2.0",
     "react-lazy-load-image-component": "^1.6.3",
     "react-router-dom": "^7.9.5",
-    "react-scripts": "^5.0.1",
+    "react-scripts": "5.0.1",
     "react-toastify": "^11.0.5",
     "swiper": "^12.0.3",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-  "start": "react-scripts start",
-  "build": "node node_modules/react-scripts/scripts/build.js",
-  "test": "react-scripts test",
-  "eject": "react-scripts eject"
-},
+    "start": "react-scripts start",
+    "build": "node node_modules/react-scripts/scripts/build.js",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
   "eslintConfig": {
     "extends": [
       "react-app",
