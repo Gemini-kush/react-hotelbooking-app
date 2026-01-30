@@ -9,25 +9,28 @@ const Rooms = () => {
   const [rooms, setRooms] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // ✅ Fetch rooms from backend
+  // ✅ Fetch rooms from Vercel API
   useEffect(() => {
     const fetchRooms = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/api/rooms");
-        if (res.data.success && Array.isArray(res.data.data)) {
-          const allRooms = res.data.data;
+        const res = await axios.get("/api/rooms");
 
-          // ✅ Group rooms by their type (e.g., Deluxe, Standard, etc.)
-          const grouped = {};
-          allRooms.forEach((room) => {
-            if (!grouped[room.type]) grouped[room.type] = room;
-          });
+        // Support both formats:
+        // 1) [{...}, {...}]
+        // 2) { success: true, data: [...] }
+        const allRooms = Array.isArray(res.data)
+          ? res.data
+          : res.data?.data || [];
 
-          // ✅ Only keep one per type
-          setRooms(Object.values(grouped));
-        } else {
-          console.error("Unexpected API response:", res.data);
-        }
+        // ✅ Group rooms by type (show only one per type)
+        const grouped = {};
+        allRooms.forEach((room) => {
+          if (!grouped[room.type]) {
+            grouped[room.type] = room;
+          }
+        });
+
+        setRooms(Object.values(grouped));
       } catch (error) {
         console.error("❌ Error fetching rooms:", error);
       } finally {
@@ -38,7 +41,7 @@ const Rooms = () => {
     fetchRooms();
   }, []);
 
-  // ✅ Icon Mapper for Amenities
+  // ✅ Amenity icon mapper
   const getAmenityIcon = (amenity) => {
     if (!amenity) return null;
     switch (amenity.toLowerCase()) {
@@ -59,22 +62,9 @@ const Rooms = () => {
     }
   };
 
-  // ✅ Handle redirect to booking page
-  const handleBooking = (room) => {
-    navigate("/booking", {
-      state: {
-        selectedRoom: room.title,
-        price: room.price,
-        guests: room.guests,
-        image: room.img,
-        desc: room.desc,
-      },
-    });
-  };
-
   return (
     <section>
-      {/* Header Section */}
+      {/* Header */}
       <div
         className="text-center py-5 text-white"
         style={{ backgroundColor: "#E54C19" }}
@@ -85,7 +75,7 @@ const Rooms = () => {
         </p>
       </div>
 
-      {/* Rooms Section */}
+      {/* Rooms */}
       <Container className="my-5">
         {loading ? (
           <div className="text-center py-5">
@@ -94,7 +84,6 @@ const Rooms = () => {
         ) : (
           <Row className="g-4">
             {rooms.map((room, index) => {
-              // safely parse amenities (stringified JSON in DB)
               let amenities = [];
               try {
                 amenities = Array.isArray(room.amenities)
@@ -106,7 +95,7 @@ const Rooms = () => {
 
               return (
                 <Col md={4} key={index}>
-                  <Card className="shadow-sm h-100 bm border-0 rounded-4 overflow-hidden">
+                  <Card className="shadow-sm h-100 border-0 rounded-4 overflow-hidden">
                     <div className="position-relative mb-3">
                       <Card.Img
                         variant="top"
@@ -115,9 +104,10 @@ const Rooms = () => {
                         loading="lazy"
                         style={{ height: "220px", objectFit: "cover" }}
                       />
-                      {/* Price Tag */}
+
+                      {/* Price */}
                       <div
-                        className="position-absolute top-0 end-0 d-flex align-items-center rounded-2"
+                        className="position-absolute top-0 end-0 rounded-2"
                         style={{
                           background: "#fff",
                           boxShadow: "0 2px 6px rgba(0,0,0,0.1)",
@@ -126,42 +116,37 @@ const Rooms = () => {
                         }}
                       >
                         <span
-                          style={{
-                            color: "#E54C19",
-                            fontWeight: "600",
-                            marginRight: "2px",
-                          }}
+                          style={{ color: "#E54C19", fontWeight: "600" }}
                         >
                           ₹{room.price}
                         </span>
                         <span
-                          style={{
-                            color: "#666",
-                            fontSize: "0.85rem",
-                          }}
+                          style={{ color: "#666", fontSize: "0.85rem" }}
                         >
+                          {" "}
                           /night
                         </span>
                       </div>
                     </div>
 
                     <Card.Body>
-                      <Card.Title className="mb-3">{room.type}</Card.Title>
-                      <p className="text-muted mb-3">
-                        👥 {room.guests} Guests &nbsp; | &nbsp; 📐 {room.size}{" "}
-                        sq ft
+                      <Card.Title>{room.type}</Card.Title>
+                      <p className="text-muted mb-2">
+                        👥 {room.guests} Guests | 📐 {room.size} sq ft
                       </p>
+
                       <Card.Text className="small mb-3">
                         {room.description ||
-                          "Spacious room with modern amenities and elegant interiors for a comfortable stay."}
+                          "Spacious room with modern amenities and elegant interiors."}
                       </Card.Text>
+
                       <p className="fw-semibold mb-2">Amenities:</p>
                       <div className="d-flex flex-wrap gap-2 mb-3">
-                        {Array.isArray(amenities) && amenities.length > 0 ? (
+                        {amenities.length > 0 ? (
                           amenities.map((a, i) => (
                             <span
                               key={i}
-                              className="badge bg-light text-dark border border-secondary"
+                              className="badge bg-light text-dark border"
                             >
                               {getAmenityIcon(a)}
                               {a}
@@ -177,12 +162,14 @@ const Rooms = () => {
                       <Button
                         onClick={() =>
                           navigate("/booking", {
-                            state: { roomId: room.id }, // ✅ send only ID
+                            state: { roomId: room.id },
                           })
                         }
-                        variant="dark"
-                        className="w-100 fw-semibold book-btn"
-                        style={{ backgroundColor: "#E54C19", border: "none" }}
+                        className="w-100 fw-semibold"
+                        style={{
+                          backgroundColor: "#E54C19",
+                          border: "none",
+                        }}
                       >
                         Book This Room
                       </Button>
