@@ -103,9 +103,28 @@ function Footer() {
 
         <hr className="border-light mt-4 mb-3" />
 
+        {/* --- Copyright --- */}
+        <p className="text-center text-secondary small mb-1">
+          © 2025{" "}
+          <span style={{ color: "#FF501C" }}>Maheshwari Nivas</span>. All Rights
+          Reserved.
+        </p>
+
+        {/* --- Developer Credit --- */}
         <p className="text-center text-secondary small mb-0">
-          © 2025 <span style={{ color: "#FF501C" }}>Maheshwari Nivas</span>. All
-          Rights Reserved.
+          Developed by{" "}
+          <a
+            href="https://github.com/Gemini-kush"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              color: "#FF501C",
+              textDecoration: "none",
+              fontWeight: "500",
+            }}
+          >
+            Kushal Karjee
+          </a>
         </p>
       </Container>
     </footer>
