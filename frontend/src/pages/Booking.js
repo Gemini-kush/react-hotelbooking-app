@@ -11,15 +11,16 @@ import {
   Toast,
   Spinner,
 } from "react-bootstrap";
+import axios from "axios";
 import "./Booking.css";
 
 const Booking = () => {
   const location = useLocation();
-  const backendURL = "http://localhost:5000";
 
-  // ✅ State
+  // ---------------- STATE ----------------
   const [rooms, setRooms] = useState([]);
   const [loadingRooms, setLoadingRooms] = useState(true);
+  const [checkingAvailability, setCheckingAvailability] = useState(false);
 
   const [formData, setFormData] = useState({
     fullName: "",
@@ -27,7 +28,7 @@ const Booking = () => {
     phone: "",
     checkIn: "",
     checkOut: "",
-    roomType: "",
+    roomId: "",
     guests: "2 Guests",
     requests: "",
   });
@@ -43,23 +44,19 @@ const Booking = () => {
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showToast, setShowToast] = useState(false);
 
-  // ✅ Handle form input
+  // ---------------- HELPERS ----------------
+  const today = new Date().toISOString().split("T")[0];
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // ✅ Set today's date for date picker min value
-  const today = new Date().toISOString().split("T")[0];
-
-  // ✅ Fetch all rooms from backend
+  // ---------------- FETCH ROOMS ----------------
   useEffect(() => {
     const fetchRooms = async () => {
       try {
-        const res = await fetch(`${backendURL}/api/rooms`);
-        const data = await res.json();
-        if (data.success) {
-          setRooms(data.data);
-        }
+        const res = await axios.get("/api/rooms");
+        setRooms(res.data);
       } catch (err) {
         console.error("❌ Failed to fetch rooms:", err);
       } finally {
@@ -70,22 +67,16 @@ const Booking = () => {
     fetchRooms();
   }, []);
 
-  // ✅ Prefill room if navigated from Rooms page
+  // ---------------- PREFILL FROM ROOMS PAGE ----------------
   useEffect(() => {
-    if (location.state?.selectedRoom && rooms.length > 0) {
-      const selected = rooms.find(
-        (r) => r.type === location.state.selectedRoom
-      );
-
+    if (location.state?.roomId && rooms.length > 0) {
+      const selected = rooms.find((r) => r._id === location.state.roomId);
       if (selected) {
         setFormData((prev) => ({
           ...prev,
-          roomType: `${
-            selected.type
-          } - ₹${selected.price.toLocaleString()}/night`,
+          roomId: selected._id,
           guests: `${selected.guests} Guests`,
         }));
-
         setSummary((prev) => ({
           ...prev,
           roomPrice: selected.price,
@@ -94,115 +85,107 @@ const Booking = () => {
     }
   }, [location.state, rooms]);
 
-  // ✅ Calculate price dynamically
+  // ---------------- PRICE CALCULATION ----------------
   useEffect(() => {
-    if (!formData.roomType) return;
+    if (!formData.roomId) return;
 
-    // Match by room type (not name)
-    const selectedType = formData.roomType.split("-")[0].trim();
-    const matchedRoom = rooms.find((r) => r.type === selectedType);
-    const roomPrice = matchedRoom ? matchedRoom.price : 0;
+    const room = rooms.find((r) => r._id === formData.roomId);
+    if (!room) return;
 
     const checkInDate = new Date(formData.checkIn);
     const checkOutDate = new Date(formData.checkOut);
-    const diffTime = checkOutDate - checkInDate;
-    const nights = diffTime > 0 ? diffTime / (1000 * 3600 * 24) : 0;
+    const nights =
+      checkOutDate > checkInDate
+        ? (checkOutDate - checkInDate) / (1000 * 3600 * 24)
+        : 0;
 
-    const roomCharges = nights * roomPrice;
+    const roomCharges = nights * room.price;
     const tax = roomCharges * 0.12;
     const total = roomCharges + tax;
 
-    setSummary({ nights, roomPrice, roomCharges, tax, total });
-  }, [formData.checkIn, formData.checkOut, formData.roomType, rooms]);
+    setSummary({
+      nights,
+      roomPrice: room.price,
+      roomCharges,
+      tax,
+      total,
+    });
+  }, [formData.checkIn, formData.checkOut, formData.roomId, rooms]);
 
-  // ✅ Payment flow
-  const handlePayment = async () => {
-    if (
-      !formData.fullName ||
-      !formData.email ||
-      !formData.checkIn ||
-      !formData.checkOut
-    ) {
-      alert("Please fill all required fields before proceeding.");
-      return;
+  // ---------------- AVAILABILITY CHECK ----------------
+  const checkAvailability = async () => {
+    if (!formData.roomId || !formData.checkIn || !formData.checkOut) {
+      alert("Please select room and dates");
+      return false;
     }
 
-    if (!summary.total || summary.total <= 0) {
-      alert("Please select a valid room type and date range before payment.");
-      return;
-    }
-
-    console.log("🧾 Payment amount before request:", summary.total);
-
+    setCheckingAvailability(true);
     try {
-      const orderRes = await fetch(`${backendURL}/api/payment/create-order`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          amount: summary.total,
-          receipt: "receipt_" + Date.now(),
-        }),
+      const res = await axios.get("/api/availability", {
+        params: {
+          roomId: formData.roomId,
+          checkIn: formData.checkIn,
+          checkOut: formData.checkOut,
+        },
       });
 
-      if (!orderRes.ok) {
-        const text = await orderRes.text();
-        console.error("Create order failed:", text);
-        alert("Order creation failed — check server logs.");
-        return;
-      }
-
-      const order = await orderRes.json();
-      if (!order || !order.id) {
-        alert("Unable to create order. Please try again.");
-        return;
-      }
-
-      const options = {
-        key: "rzp_test_Rcmx6BM6gABBYb",
-        amount: order.amount,
-        currency: order.currency,
-        name: "Maheshwari Nivas",
-        description: "Room Booking Payment",
-        order_id: order.id,
-        handler: async (response) => {
-          const verifyRes = await fetch(`${backendURL}/api/payment/verify`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              ...response,
-              bookingData: { ...formData, totalAmount: summary.total }, // ✅ FIXED
-            }),
-          });
-
-          const verifyData = await verifyRes.json();
-
-          if (verifyData.success) {
-            setShowSuccessModal(true);
-            setShowToast(true);
-            setTimeout(() => {
-              setShowSuccessModal(false);
-              window.location.href = "/booking";
-            }, 4000);
-          } else {
-            alert("Payment verification failed: " + verifyData.message);
-          }
-        },
-        prefill: {
-          name: formData.fullName,
-          email: formData.email,
-          contact: formData.phone,
-        },
-        theme: { color: "#E54C19" },
-      };
-
-      const rzp = new window.Razorpay(options);
-      rzp.open();
+      return res.data.available;
     } catch (err) {
-      console.error("❌ Payment error:", err);
-      alert("Something went wrong with payment. Please try again.");
+      console.error("Availability check failed:", err);
+      return false;
+    } finally {
+      setCheckingAvailability(false);
     }
   };
 
+  // ---------------- BOOKING (NO PAYMENT HERE) ----------------
+  const handleBooking = async () => {
+    if (
+      !formData.fullName ||
+      !formData.email ||
+      !formData.phone ||
+      !formData.checkIn ||
+      !formData.checkOut
+    ) {
+      alert("Please fill all required fields");
+      return;
+    }
+
+    if (summary.total <= 0) {
+      alert("Invalid booking amount");
+      return;
+    }
+
+    const available = await checkAvailability();
+    if (!available) {
+      alert("❌ Room is not available for selected dates");
+      return;
+    }
+
+    try {
+      await axios.post("/api/booking", {
+        roomId: formData.roomId,
+        name: formData.fullName,
+        email: formData.email,
+        phone: formData.phone,
+        checkIn: formData.checkIn,
+        checkOut: formData.checkOut,
+      });
+
+      setShowSuccessModal(true);
+      setShowToast(true);
+
+      setTimeout(() => {
+        setShowSuccessModal(false);
+        window.location.reload();
+      }, 4000);
+    } catch (err) {
+      console.error("Booking failed:", err);
+      alert("Booking failed. Please try again.");
+    }
+  };
+
+  // ---------------- UI ----------------
   return (
     <>
       <section className="booking-section py-5">
@@ -210,7 +193,7 @@ const Booking = () => {
           <div className="text-center mb-5">
             <h2 className="fw-bold">Book Your Stay</h2>
             <p className="text-muted">
-              Fill in the details below to reserve your room at Maheshwari Nivas
+              Reserve your room at Maheshwari Nivas
             </p>
           </div>
 
@@ -222,161 +205,96 @@ const Booking = () => {
             <Row className="justify-content-center">
               <Col lg={8}>
                 <Card className="shadow-sm border-0 rounded-4 p-4 mb-4">
-                  <h5 className="fw-bold mb-4">Booking Details</h5>
                   <Form>
-                    {/* Personal Info */}
+                    {/* PERSONAL INFO */}
                     <Form.Group className="mb-3">
                       <Form.Label>Full Name *</Form.Label>
                       <Form.Control
-                        type="text"
                         name="fullName"
-                        placeholder="Enter your full name"
                         value={formData.fullName}
                         onChange={handleChange}
-                        required
                       />
                     </Form.Group>
 
                     <Row className="mb-3">
                       <Col md={6}>
-                        <Form.Group controlId="email">
-                          <Form.Label>Email *</Form.Label>
-                          <Form.Control
-                            type="email"
-                            name="email"
-                            placeholder="info@gmail.com"
-                            value={formData.email}
-                            onChange={handleChange}
-                            required
-                          />
-                        </Form.Group>
+                        <Form.Control
+                          name="email"
+                          placeholder="Email"
+                          value={formData.email}
+                          onChange={handleChange}
+                        />
                       </Col>
                       <Col md={6}>
-                        <Form.Group controlId="phone">
-                          <Form.Label>Phone *</Form.Label>
-                          <Form.Control
-                            type="tel"
-                            name="phone"
-                            placeholder="1234567890"
-                            value={formData.phone}
-                            onChange={handleChange}
-                            required
-                          />
-                        </Form.Group>
+                        <Form.Control
+                          name="phone"
+                          placeholder="Phone"
+                          value={formData.phone}
+                          onChange={handleChange}
+                        />
                       </Col>
                     </Row>
 
-                    {/* Dates */}
+                    {/* DATES */}
                     <Row className="mb-3">
                       <Col md={6}>
-                        <Form.Group controlId="checkIn">
-                          <Form.Label>Check-in *</Form.Label>
-                          <Form.Control
-                            type="date"
-                            name="checkIn"
-                            min={today}
-                            value={formData.checkIn}
-                            onChange={handleChange}
-                            required
-                          />
-                        </Form.Group>
+                        <Form.Control
+                          type="date"
+                          name="checkIn"
+                          min={today}
+                          value={formData.checkIn}
+                          onChange={handleChange}
+                        />
                       </Col>
                       <Col md={6}>
-                        <Form.Group controlId="checkOut">
-                          <Form.Label>Check-out *</Form.Label>
-                          <Form.Control
-                            type="date"
-                            name="checkOut"
-                            min={formData.checkIn || today}
-                            value={formData.checkOut}
-                            onChange={handleChange}
-                            required
-                          />
-                        </Form.Group>
+                        <Form.Control
+                          type="date"
+                          name="checkOut"
+                          min={formData.checkIn || today}
+                          value={formData.checkOut}
+                          onChange={handleChange}
+                        />
                       </Col>
                     </Row>
 
-                    {/* Room Type + Guests */}
-                    <Row className="mb-3">
-                      <Col md={6}>
-                        <Form.Group controlId="roomType">
-                          <Form.Label>Room Type *</Form.Label>
-                          <Form.Select
-                            name="roomType"
-                            value={formData.roomType}
-                            onChange={handleChange}
-                          >
-                            {rooms.length > 0 ? (
-                              rooms.map((r) => (
-                                <option key={r.id}>
-                                  {r.type} - ₹{r.price.toLocaleString()}/night
-                                </option>
-                              ))
-                            ) : (
-                              <option>Loading rooms...</option>
-                            )}
-                          </Form.Select>
-                        </Form.Group>
-                      </Col>
-                      <Col md={6}>
-                        <Form.Group controlId="guests">
-                          <Form.Label>Guests *</Form.Label>
-                          <Form.Select
-                            name="guests"
-                            value={formData.guests}
-                            onChange={handleChange}
-                          >
-                            <option>1 Guest</option>
-                            <option>2 Guests</option>
-                            <option>3 Guests</option>
-                            <option>4 Guests</option>
-                            <option>5 Guests</option>
-                          </Form.Select>
-                        </Form.Group>
-                      </Col>
-                    </Row>
-
-                    <Form.Group controlId="requests" className="mb-4">
-                      <Form.Label>Special Requests</Form.Label>
-                      <Form.Control
-                        as="textarea"
-                        name="requests"
-                        rows={2}
-                        placeholder="Any special requirements or requests..."
-                        value={formData.requests}
-                        onChange={handleChange}
-                      />
-                    </Form.Group>
+                    {/* ROOM */}
+                    <Form.Select
+                      className="mb-3"
+                      name="roomId"
+                      value={formData.roomId}
+                      onChange={handleChange}
+                    >
+                      <option value="">Select Room</option>
+                      {rooms.map((r) => (
+                        <option key={r._id} value={r._id}>
+                          {r.type} – ₹{r.price}/night
+                        </option>
+                      ))}
+                    </Form.Select>
 
                     <Button
-                      onClick={handlePayment}
-                      className="w-100 fw-semibold py-2 payment-btn"
+                      onClick={handleBooking}
+                      disabled={checkingAvailability}
+                      className="w-100 fw-semibold"
+                      style={{ backgroundColor: "#E54C19", border: "none" }}
                     >
-                      Proceed to Payment
+                      {checkingAvailability
+                        ? "Checking availability..."
+                        : "Confirm Booking"}
                     </Button>
                   </Form>
                 </Card>
               </Col>
 
-              {/* Booking Summary */}
+              {/* SUMMARY */}
               <Col lg={4}>
-                <Card className="shadow-sm border-0 rounded-4 p-4 sticky-top summary-card">
+                <Card className="shadow-sm border-0 rounded-4 p-4">
                   <h5 className="fw-bold mb-3">Booking Summary</h5>
-                  <p className="fw-semibold">
-                    {formData.roomType.split("-")[0] || "Select Room"}
-                  </p>
-                  <hr />
                   <div className="d-flex justify-content-between">
-                    <span>Room Charges</span>
-                    <span>₹{summary.roomCharges.toLocaleString()}</span>
-                  </div>
-                  <div className="d-flex justify-content-between mb-2">
-                    <span>Taxes & Fees (12%)</span>
-                    <span>₹{summary.tax.toLocaleString()}</span>
-                  </div>
-                  <div className="d-flex justify-content-between fw-bold text-orange border-top pt-2">
-                    <span>Total Amount</span>
-                    <span>₹{summary.total.toLocaleString()}</span>
+                    <span>Total</span>
+                    <span className="fw-bold text-orange">
+                      ₹{summary.total.toLocaleString()}
+                    </span>
                   </div>
                 </Card>
               </Col>
@@ -385,34 +303,21 @@ const Booking = () => {
         </Container>
       </section>
 
-      {/* ✅ Success Modal */}
+      {/* SUCCESS */}
       <Modal show={showSuccessModal} centered>
         <div className="text-center p-4">
-          <div
-            className="rounded-circle bg-success text-white d-inline-flex align-items-center justify-content-center mb-3"
-            style={{ width: "70px", height: "70px", fontSize: "32px" }}
-          >
-            ✓
-          </div>
-          <h4 className="fw-bold">Payment Successful!</h4>
-          <p className="text-muted mb-1">
-            Your booking has been confirmed successfully.
-          </p>
+          <h4 className="fw-bold">Booking Confirmed 🎉</h4>
+          <p>Confirmation email has been sent.</p>
         </div>
       </Modal>
 
-      {/* ✅ Toast Notification */}
       <Toast
-        onClose={() => setShowToast(false)}
         show={showToast}
         delay={5000}
         autohide
         className="position-fixed bottom-0 end-0 m-4 bg-success text-white"
       >
-        <Toast.Body>
-          ✅ Payment Successful! <br /> Confirmation mail has been sent to your
-          email.
-        </Toast.Body>
+        <Toast.Body>✅ Booking successful</Toast.Body>
       </Toast>
     </>
   );
